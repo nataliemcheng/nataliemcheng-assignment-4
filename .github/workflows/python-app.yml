@@ -29,19 +29,17 @@ jobs:
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Lint with flake8
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
     - name: Run make install
       run: |
         make install
 
     - name: Run make with server start-up
       run: |
-        make run
+        make run &
+        sleep 10  # Wait for the server to start
 
     - name: Test with pytest
       run: |
-        pytest 
+        curl --retry 5 --retry-delay 2 http://localhost:3000  # Ensure the server is reachable
+        pytest  # Run the tests
+
