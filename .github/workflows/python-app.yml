@@ -40,12 +40,11 @@ jobs:
 
     - name: Run make with server start-up
       run: |
-        make run &
-        sleep 5 
-        
-        # check if the server is up
+        make run > server.log 2>&1 &
+        sleep 10 
+        cat server.log  
         curl --retry 5 --retry-delay 2 http://localhost:3000 || exit 1
 
     - name: Test with pytest
       run: |
-        pytest -v  
+        pytest -v 
